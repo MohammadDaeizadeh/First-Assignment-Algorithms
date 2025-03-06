@@ -9,7 +9,14 @@ public class Exercises {
         note: you should return the indices in ascending order and every array's solution is unique
     */
     public int[] productIndices(int[] values, int target) {
-        // todo
+        for(int i = 0;i < values.length-1;i++){
+            if(values[i] == 0) continue;
+            for(int j = i+1;j < values.length;j++){
+                if(values[i]*values[j] == target){
+                    return new int[]{i, j};
+                }
+            }
+        }
         return null;
     }
 
@@ -25,8 +32,40 @@ public class Exercises {
         so you should walk in that matrix in a curl and then add the numbers in order you've seen them in a 1D array
     */
     public int[] spiralTraversal(int[][] values, int rows, int cols) {
-        // todo
-        return null;
+        int[] lineArray = new int[rows*cols];
+
+        if (values == null || rows == 0 || cols == 0) {
+            return lineArray;
+        }
+
+        int left = 0,right = cols - 1,top = 0, bottom = rows- 1,index = 0;
+
+
+        while(left <= right && top <= bottom){
+            //Going Right
+            for(int i = left;i <= right;i++) lineArray[index++] = values[top][i];
+            top++;
+
+            //Going Bottom
+            for(int i = top;i <= bottom;i++) lineArray[index++] = values[i][right];
+            right--;
+
+            //Going Left
+            if(top <= bottom){
+                for(int i = right;i >= left;i--)  lineArray[index++] = values[bottom][i];
+                bottom--;
+            }
+            
+
+            //Going Up
+            if(left <= right){
+                for(int i = bottom;i >= top;i--)  lineArray[index++] = values[i][left];
+                left++;
+            }
+            
+        }
+
+        return lineArray;
     }
 
     /*
@@ -54,11 +93,58 @@ public class Exercises {
         if you're familiar with lists and arraylists, you can also edit method's body to use them instead of array
     */
     public int[][] intPartitions(int n) {
-        // todo
-        return null;
+        // Calculate the total number of partitions
+        int partitionCount = countPartitions(n, n);
+        int[][] result = new int[partitionCount][];
+        int[] currentPartition = new int[n];
+        int[] resultIndex = {0};
+    
+        generatePartitions(n, n, currentPartition, 0, result, resultIndex);
+        return result;
+    }
+    
+    private void generatePartitions(int n, int max, int[] currentPartition, int index, int[][] result, int[] resultIndex) {
+        if (n == 0) {
+            // Add the current partition to the result
+            result[resultIndex[0]] = new int[index];
+            for (int i = 0; i < index; i++) {
+                result[resultIndex[0]][i] = currentPartition[i];
+            }
+            resultIndex[0]++;
+            return;
+        }
+    
+        for (int i = Math.min(max, n); i >= 1; i--) {
+            currentPartition[index] = i;
+            generatePartitions(n - i, i, currentPartition, index + 1, result, resultIndex);
+        }
+    }
+    
+    private int countPartitions(int n, int max) {
+        if (n == 0) return 1;
+        int count = 0;
+        for (int i = Math.min(max, n); i >= 1; i--) {
+            count += countPartitions(n - i, i);
+        }
+        return count;
     }
 
     public static void main(String[] args) {
         // you can test your code here
+        Exercises x = new Exercises();
+        int[][] nums = {
+            {1, 2, 3, 4, 5, 6},
+            {7, 8, 9, 10, 11, 12},
+            {13, 14, 15, 16, 17, 18},
+            {19, 20, 21, 22, 23, 24},
+            {25, 26, 27, 28, 29, 30}
+    };
+    int rows = 5;
+    int cols = 6;
+        int[] m = x.spiralTraversal(nums, rows, cols);
+        for(int i = 0;i < 30;i++){
+            System.out.println(m[i]);
+        }
+
     }
 }
